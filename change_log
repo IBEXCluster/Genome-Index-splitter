@@ -1,0 +1,45 @@
+$ diff MPI_genome_index_splitter.sh Wheat_genome_index_spliter.sh 
+1a2
+> ## Ver 3.0 dated 18 Oct, 2021
+5c6
+<   read -p " Please enter absolute path of the reference genome with name (e.g. /project/k01/kathirn/3k/ref/Nipponbare_chr.fasta) : " REF
+---
+>   read -p " Please enter absolute path of the reference genome with name (e.g. /ibex/scratch/projects/c2023/einkorn/Resequencing/Ref_final/TA299_v1.0.fasta) : " REF
+6a8
+> #  read -p " Please enter absolute path for your resutls directory: " OUTDIR 
+11c13
+<   TasksPerNode ;
+---
+>   RequiredCPU;
+50,53d51
+<    echo "*************************************************************"
+<   else
+<    echo "No. of optimal CPUs will be calculated as follows:"
+<    echo " ... Using 4 Cores/Sample and 8 samples/Node ... (in Intel Sakylake architecture) ..."
+124c122
+< function TasksPerNode()
+---
+> function RequiredCPU()
+125a124,128
+>   echo " ***************************************************"
+>   echo " Useful details: "
+>   echo " Chromosome based number of partitions available in: submitted_chunks_data.txt" 
+>   echo " Chromosome based chunk intervals available in: split.txt" 
+>   echo " Reference Genome distribution is available in: distribution.txt " 
+127,130c130,134
+<   #Nodes=$(( ((TotalLines+31) / 32) ))
+<   Nodes=$(( ((TotalLines+31) / 4) ))
+<   echo "The following values can be set in your Phase3.batch "
+<   echo " -N $Nodes and --ntasks=$TotalLines " 
+---
+>   sed -i "3s/.*/#SBATCH --array=1-$TotalLines/" WheatGenome_SNPCalling.batch ;
+> # sed -i "17s/.*/export REF=$REF/" WheatGenome_SNPCalling.batch ;
+> #  sed -i "18s/.*/export OUTPUT=$OUTDIR/" WheatGenome_SNPCalling.batch ;
+>   echo "    Please adjust --time & --mem in the 'WheatGenome_SNPCalling.batch' and submit your job"
+>   echo " ***************************************************"
+137c141
+<  for i in `ls -l ${INPDIR}/*.g.vcf.gz | awk '{print $9}'`
+---
+>  for i in `ls -l ${INPDIR}/*.g.vcf | awk '{print $9}'`
+144d147
+< 
